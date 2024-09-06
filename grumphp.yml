@@ -1,5 +1,11 @@
 grumphp:
     tasks:
-      xmllint: ~
+      xmllint:
+        triggered_by: ['xml', 'xsd']
+        scheme_validation: true
+        x_include: true
+        dtd_validation: true
       phpcs: ~
-      phpmd: ~
+      phpmd:
+        ruleset:
+          - "ruleset.xml"

@@ -1,9 +1,9 @@
-# TweakwiseHyva
-Hyvä Themes Compatibility module for [Tweakwise_Magento2Tweakwise](https://github.com/Tweakwise/Magento2Tweakwise)
+# Tweakwise JS
+Magento 2 module for Tweakwise JS
 
 ## Installation
 
-- `composer require tweakwise/magento2-tweakwise-hyva`
+- `composer require tweakwise/magento2-tweakwise-js`
 - `bin/magento setup:upgrade`
 
 ## Contributors
