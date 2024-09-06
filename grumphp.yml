@@ -1,0 +1,5 @@
+grumphp:
+    tasks:
+      xmllint: ~
+      phpcs: ~
+      phpmd: ~

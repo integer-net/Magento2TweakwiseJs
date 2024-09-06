@@ -1,0 +1,38 @@
+{
+    "name": "tweakwise/magento2-tweakwise-js",
+    "license": "OSL-3.0",
+    "description": "Magento 2 module for Tweakwise JS",
+    "type": "magento2-module",
+    "require": {
+        "php": "^8.0"
+    },
+    "require-dev": {
+        "magento/framework": "*",
+        "phpro/grumphp-shim": "^2.7",
+        "squizlabs/php_codesniffer": "^3.10",
+        "phpmd/phpmd": "^2.15",
+        "slevomat/coding-standard": "^8.15",
+        "magento-ecg/coding-standard": "^4.5"
+    },
+    "autoload": {
+        "files": [
+            "src/registration.php"
+        ],
+        "psr-4": {
+            "Tweakwise\\TweakwiseJs\\": "src/"
+        }
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://repo.magento.com/"
+        }
+    ],
+    "config": {
+        "allow-plugins": {
+            "phpro/grumphp-shim": true,
+            "magento/composer-dependency-version-audit-plugin": false,
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    }
+}
