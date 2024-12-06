@@ -32,7 +32,7 @@ class Data extends AbstractHelper
      */
     public function getTweakwiseId(int $entityId): string
     {
-        $storeId = $this->storeManager->getStore()->getId();
+        $storeId = (int) $this->storeManager->getStore()->getId();
         return $this->exportHelper->getTweakwiseId($storeId, $entityId);
     }
 }
