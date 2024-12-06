@@ -1,0 +1,18 @@
+<?php
+declare(strict_types = 1);
+
+use Magento\Framework\View\Element\Template;
+
+/** @var Template $block */
+?>
+
+<script>
+    window.tweakwiseFailover = function (src) {
+        var script = document.createElement("script");
+        script.async = true;
+        script.src = src;
+        document.head.appendChild(script);
+    };
+    window["twn-starter-config"] = window["twn-starter-config"] || {};
+</script>
+

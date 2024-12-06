@@ -1,0 +1,14 @@
+<?php
+declare(strict_types = 1);
+
+use Magento\Catalog\Block\Category\View;
+
+/** @var View $block */
+
+$viewModel = $block->getViewModel();
+?>
+
+<script>
+    window['twn-starter-config'].navigation.cid = <?= $viewModel->getTweakwiseCategoryId($block);?>;
+</script>
+
