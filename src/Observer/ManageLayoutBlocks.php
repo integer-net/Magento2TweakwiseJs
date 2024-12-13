@@ -42,7 +42,6 @@ class ManageLayoutBlocks implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
-        // TODO: CAN WE SPECIFY ON WHICH PAGE TYPES THE BLOCKS MUST BE LOADED?
         if (!$this->config->isEnabled()) {
             return;
         }

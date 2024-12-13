@@ -29,7 +29,6 @@ class AddPageAssets implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
-        // TODO: CAN WE SPECIFY ON WHICH PAGE TYPES THE SCRIPTS MUST BE LOADED?
         if (!$this->config->isEnabled()) {
             return;
         }
