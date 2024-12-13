@@ -3,10 +3,15 @@
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
     <default>
         <tweakwisejs>
+            <general>
+                <enabled>0</enabled>
+            </general>
             <merchandising>
-                <category_products_list_block_name>category.products.list</category_products_list_block_name>
-                <sidebar_block_name>sidebar.main</sidebar_block_name>
+                <enabled>0</enabled>
             </merchandising>
+            <search>
+                <type>magento_default</type>
+            </search>
         </tweakwisejs>
     </default>
 </config>

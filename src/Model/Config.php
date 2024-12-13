@@ -14,6 +14,8 @@ class Config
 
     private const XML_PATH_MERCHANDISING_ENABLED = 'tweakwisejs/merchandising/enabled';
 
+    private const XML_PATH_SEARCH_TYPE = 'tweakwisejs/search/type';
+
     /**
      * @param ScopeConfigInterface $scopeConfig
      */
@@ -44,5 +46,13 @@ class Config
     public function isMerchandisingEnabled(): bool
     {
         return $this->scopeConfig->isSetFlag(self::XML_PATH_MERCHANDISING_ENABLED, ScopeInterface::SCOPE_STORE);
+    }
+
+    /**
+     * @return string
+     */
+    public function getSearchType(): string
+    {
+        return $this->scopeConfig->getValue(self::XML_PATH_SEARCH_TYPE, ScopeInterface::SCOPE_STORE);
     }
 }

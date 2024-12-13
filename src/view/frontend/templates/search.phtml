@@ -1,0 +1,40 @@
+<?php
+declare(strict_types = 1);
+
+use Magento\Framework\View\Element\Template;
+use Tweakwise\TweakwiseJs\Model\Enum\SearchType;
+use Tweakwise\TweakwiseJs\ViewModel\Search;
+
+/** @var Template $block */
+
+/** @var Search $viewModel */
+$viewModel = $block->getViewModel();
+?>
+
+<?php if ($viewModel->getSearchType() === SearchType::SUGGESTIONS->value): ?>
+    <script>
+        window['twn-starter-config'].input = [];
+        window.addEventListener('DOMContentLoaded', function () {
+            window.tweakwiseSuggestions({
+                input: "#search",
+                instancekey: "<?= $viewModel->getInstanceKey();?>",
+                cid: "<?= $viewModel->getStoreRootCategory();?>",
+                searchPhrases: {
+                    handle: ({ data }) => {
+                        location.href = '<?= $viewModel->getSearchUrl();?>?tn_q=' + data.match;
+                    }
+                }
+            });
+        });
+    </script>
+<?php else: ?>
+    <script>
+        window.addEventListener("DOMContentLoaded", function () {
+            var form = document.getElementById('search');
+            console.log(form);
+            form.submit = function(event){
+                event.preventDefault();
+            };
+        });
+    </script>
+<?php endif; ?>

@@ -9,7 +9,7 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Tweakwise\TweakwiseJs\Helper\Data;
 
-class TweakwiseJs implements ArgumentInterface
+class Merchandising implements ArgumentInterface
 {
     /**
      * @param Data $dataHelper
@@ -22,10 +22,13 @@ class TweakwiseJs implements ArgumentInterface
     /**
      * @param View $block
      * @return string
-     * @throws NoSuchEntityException
      */
     public function getTweakwiseCategoryId(View $block): string
     {
-        return $this->dataHelper->getTweakwiseId((int) $block->getCurrentCategory()->getId());
+        try {
+            return $this->dataHelper->getTweakwiseId((int)$block->getCurrentCategory()->getId());
+        } catch (NoSuchEntityException $e) {
+            return '0';
+        }
     }
 }

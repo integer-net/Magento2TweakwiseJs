@@ -14,20 +14,24 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Layout;
 use Tweakwise\TweakwiseJs\Model\Config;
-use Tweakwise\TweakwiseJs\ViewModel\TweakwiseJs;
+use Tweakwise\TweakwiseJs\Model\Enum\SearchType;
+use Tweakwise\TweakwiseJs\ViewModel\Merchandising;
+use Tweakwise\TweakwiseJs\ViewModel\Search;
 
 class ManageLayoutBlocks implements ObserverInterface
 {
     /**
      * @param Http $request
      * @param Config $config
-     * @param TweakwiseJs $viewModel
+     * @param Merchandising $merchandisingViewModel
+     * @param Search $searchViewModel
      * @param Resolver $layerResolver
      */
     public function __construct(
         private readonly Http $request,
         private readonly Config $config,
-        private readonly TweakwiseJs $viewModel,
+        private readonly Merchandising $merchandisingViewModel,
+        private readonly Search $searchViewModel,
         private readonly Resolver $layerResolver
     ) {
     }
@@ -39,6 +43,7 @@ class ManageLayoutBlocks implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
+        // TODO: CAN WE SPECIFY ON WHICH PAGE TYPES THE BLOCKS MUST BE LOADED?
         if (!$this->config->isEnabled()) {
             return;
         }
@@ -46,6 +51,10 @@ class ManageLayoutBlocks implements ObserverInterface
         $layout = $observer->getLayout();
 
         $this->addDefaultBlock($layout);
+
+        if ($this->useTweakwiseJsSearch()) {
+            $this->addSearchBlock($layout);
+        }
 
         if (!$this->isCategoryPage() || !$this->showTweakwiseJsCategoryViewBlock()) {
             return;
@@ -86,7 +95,7 @@ class ManageLayoutBlocks implements ObserverInterface
             $blockName,
             [
                 'data' => [
-                    'view_model' => $this->viewModel
+                    'view_model' => $this->merchandisingViewModel
                 ]
             ]
         )->setTemplate('Tweakwise_TweakwiseJs::category/listing.phtml');
@@ -113,5 +122,32 @@ class ManageLayoutBlocks implements ObserverInterface
         }
 
         return true;
+    }
+
+    /**
+     * @return bool
+     */
+    private function useTweakwiseJsSearch(): bool
+    {
+        return $this->config->getSearchType() !== SearchType::MAGENTO_DEFAULT->value;
+    }
+
+    /**
+     * @param Layout $layout
+     * @return void
+     */
+    private function addSearchBlock(Layout $layout): void
+    {
+        $blockName = 'tweakwise-js-search';
+        $layout->createBlock(
+            Template::class,
+            $blockName,
+            [
+                'data' => [
+                    'view_model' => $this->searchViewModel
+                ]
+            ]
+        )->setTemplate('Tweakwise_TweakwiseJs::search.phtml');
+        $layout->setChild('after.body.start', $blockName, $blockName);
     }
 }

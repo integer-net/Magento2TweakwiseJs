@@ -8,6 +8,7 @@ use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\View\Page\Config as PageConfig;
 use Tweakwise\TweakwiseJs\Model\Config;
+use Tweakwise\TweakwiseJs\Model\Enum\SearchType;
 
 class AddPageAssets implements ObserverInterface
 {
@@ -33,6 +34,20 @@ class AddPageAssets implements ObserverInterface
             return;
         }
 
+        $this->addDefaultPageAssets();
+
+        if ($this->config->getSearchType() !== SearchType::SUGGESTIONS->value) {
+            return;
+        }
+
+        $this->addSuggestionsPageAssets();
+    }
+
+    /**
+     * @return void
+     */
+    private function addDefaultPageAssets(): void
+    {
         $instanceKey = $this->config->getInstanceKey();
 
         $this->pageConfig->addRemotePageAsset(
@@ -50,6 +65,27 @@ class AddPageAssets implements ObserverInterface
             'js',
             ['attributes' => [
                 'data-failover' => sprintf('https://gateway.tweakwisenavigator.com/js/%s/tweakwise.js', $instanceKey),
+                'onerror' => 'window.tweakwiseFailover(this.dataset.failover)'
+            ]]
+        );
+    }
+
+    /**
+     * @return void
+     */
+    private function addSuggestionsPageAssets(): void
+    {
+        $this->pageConfig->addRemotePageAsset(
+            'https://gateway.tweakwisenavigator.net/js/suggestions.js',
+            'link',
+            ['attributes' => ['rel' => 'preload', 'as' => 'script']]
+        );
+
+        $this->pageConfig->addRemotePageAsset(
+            'https://gateway.tweakwisenavigator.net/js/suggestions.js',
+            'js',
+            ['attributes' => [
+                'data-failover' => 'https://gateway.tweakwisenavigator.com/js/suggestions.js',
                 'onerror' => 'window.tweakwiseFailover(this.dataset.failover)'
             ]]
         );
