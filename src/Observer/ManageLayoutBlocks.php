@@ -14,7 +14,6 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Layout;
 use Tweakwise\TweakwiseJs\Model\Config;
-use Tweakwise\TweakwiseJs\Model\Enum\SearchType;
 use Tweakwise\TweakwiseJs\ViewModel\Merchandising;
 use Tweakwise\TweakwiseJs\ViewModel\Search;
 
@@ -51,10 +50,7 @@ class ManageLayoutBlocks implements ObserverInterface
         $layout = $observer->getLayout();
 
         $this->addDefaultBlock($layout);
-
-        if ($this->useTweakwiseJsSearch()) {
-            $this->addSearchBlock($layout);
-        }
+        $this->addSearchBlock($layout);
 
         if (!$this->isCategoryPage() || !$this->showTweakwiseJsCategoryViewBlock()) {
             return;
@@ -122,14 +118,6 @@ class ManageLayoutBlocks implements ObserverInterface
         }
 
         return true;
-    }
-
-    /**
-     * @return bool
-     */
-    private function useTweakwiseJsSearch(): bool
-    {
-        return $this->config->getSearchType() !== SearchType::MAGENTO_DEFAULT->value;
     }
 
     /**

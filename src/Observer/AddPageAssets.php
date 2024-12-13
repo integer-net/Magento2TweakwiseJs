@@ -50,23 +50,13 @@ class AddPageAssets implements ObserverInterface
     {
         $instanceKey = $this->config->getInstanceKey();
 
-        $this->pageConfig->addRemotePageAsset(
-            'https://gateway.tweakwisenavigator.net/js/starter.js',
-            'link',
-            ['attributes' => ['rel' => 'preload', 'as' => 'script']]
+        $this->addLinkRemotePageAsset('https://gateway.tweakwisenavigator.net/js/starter.js');
+        $this->addLinkRemotePageAsset(
+            sprintf('https://gateway.tweakwisenavigator.net/js/%s/tweakwise.js', $instanceKey)
         );
-        $this->pageConfig->addRemotePageAsset(
+        $this->addJsRemotePageAsset(
             sprintf('https://gateway.tweakwisenavigator.net/js/%s/tweakwise.js', $instanceKey),
-            'link',
-            ['attributes' => ['rel' => 'preload', 'as' => 'script']]
-        );
-        $this->pageConfig->addRemotePageAsset(
-            sprintf('https://gateway.tweakwisenavigator.net/js/%s/tweakwise.js', $instanceKey),
-            'js',
-            ['attributes' => [
-                'data-failover' => sprintf('https://gateway.tweakwisenavigator.com/js/%s/tweakwise.js', $instanceKey),
-                'onerror' => 'window.tweakwiseFailover(this.dataset.failover)'
-            ]]
+            sprintf('https://gateway.tweakwisenavigator.com/js/%s/tweakwise.js', $instanceKey)
         );
     }
 
@@ -75,17 +65,38 @@ class AddPageAssets implements ObserverInterface
      */
     private function addSuggestionsPageAssets(): void
     {
-        $this->pageConfig->addRemotePageAsset(
+        $this->addLinkRemotePageAsset('https://gateway.tweakwisenavigator.net/js/suggestions.js');
+        $this->addJsRemotePageAsset(
             'https://gateway.tweakwisenavigator.net/js/suggestions.js',
+            'https://gateway.tweakwisenavigator.com/js/suggestions.js'
+        );
+    }
+
+    /**
+     * @param string $url
+     * @return void
+     */
+    private function addLinkRemotePageAsset(string $url): void
+    {
+        $this->pageConfig->addRemotePageAsset(
+            $url,
             'link',
             ['attributes' => ['rel' => 'preload', 'as' => 'script']]
         );
+    }
 
+    /**
+     * @param string $url
+     * @param string $failoverUrl
+     * @return void
+     */
+    private function addJsRemotePageAsset(string $url, string $failoverUrl): void
+    {
         $this->pageConfig->addRemotePageAsset(
-            'https://gateway.tweakwisenavigator.net/js/suggestions.js',
+            $url,
             'js',
             ['attributes' => [
-                'data-failover' => 'https://gateway.tweakwisenavigator.com/js/suggestions.js',
+                'data-failover' => $failoverUrl,
                 'onerror' => 'window.tweakwiseFailover(this.dataset.failover)'
             ]]
         );

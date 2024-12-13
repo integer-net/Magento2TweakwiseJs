@@ -13,10 +13,11 @@ $viewModel = $block->getViewModel();
 
 <?php if ($viewModel->getSearchType() === SearchType::SUGGESTIONS->value): ?>
     <script>
-        window['twn-starter-config'].input = [];
+        const input = window['twn-starter-config'].input;
+        window['twn-starter-config'].input = null;
         window.addEventListener('DOMContentLoaded', function () {
             window.tweakwiseSuggestions({
-                input: "#search",
+                input: input,
                 instancekey: "<?= $viewModel->getInstanceKey();?>",
                 cid: "<?= $viewModel->getStoreRootCategory();?>",
                 searchPhrases: {
@@ -27,14 +28,18 @@ $viewModel = $block->getViewModel();
             });
         });
     </script>
+<?php elseif ($viewModel->getSearchType() === SearchType::INSTANT_SEARCH->value): ?>
+    <script>
+        // TODO: PREVENT SEARCH FORM FROM SUBMIT
+        // window.addEventListener('DOMContentLoaded', function () {
+        //     var form = document.getElementById('search');
+        //     form.onkeydown = function(event){
+        //         event.preventDefault();
+        //     };
+        // });
+    </script>
 <?php else: ?>
     <script>
-        window.addEventListener("DOMContentLoaded", function () {
-            var form = document.getElementById('search');
-            console.log(form);
-            form.submit = function(event){
-                event.preventDefault();
-            };
-        });
+        window['twn-starter-config'].input = null;
     </script>
 <?php endif; ?>
