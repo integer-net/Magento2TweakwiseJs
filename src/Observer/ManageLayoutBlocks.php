@@ -12,6 +12,7 @@ use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\View\Element\Template;
+use Magento\Framework\View\Element\Text;
 use Magento\Framework\View\Layout;
 use Tweakwise\TweakwiseJs\Model\Config;
 use Tweakwise\TweakwiseJs\ViewModel\Merchandising;
@@ -19,6 +20,11 @@ use Tweakwise\TweakwiseJs\ViewModel\Search;
 
 class ManageLayoutBlocks implements ObserverInterface
 {
+    /**
+     * @var Layout
+     */
+    private Layout $layout;
+
     /**
      * @param Http $request
      * @param Config $config
@@ -46,28 +52,27 @@ class ManageLayoutBlocks implements ObserverInterface
             return;
         }
 
-        $layout = $observer->getLayout();
+        $this->layout = $observer->getLayout();
 
-        $this->addDefaultBlock($layout);
-        $this->addSearchBlock($layout);
+        $this->addDefaultBlock();
+        $this->addSearchBlock();
 
         if (!$this->isCategoryPage() || !$this->showTweakwiseJsCategoryViewBlock()) {
             return;
         }
 
-        $this->addTweakwiseJsCategoryViewBlock($layout);
+        $this->manageCategoryViewLayoutElements();
     }
 
     /**
-     * @param Layout $layout
      * @return void
      */
-    private function addDefaultBlock(Layout $layout): void
+    private function addDefaultBlock(): void
     {
         $blockName = 'tweakwise-js-default';
-        $layout->createBlock(Template::class, $blockName)
+        $this->layout->createBlock(Template::class, $blockName)
             ->setTemplate('Tweakwise_TweakwiseJs::default.phtml');
-        $layout->setChild('after.body.start', $blockName, $blockName);
+        $this->layout->setChild('after.body.start', $blockName, $blockName);
     }
 
     /**
@@ -79,13 +84,21 @@ class ManageLayoutBlocks implements ObserverInterface
     }
 
     /**
-     * @param Layout $layout
      * @return void
      */
-    private function addTweakwiseJsCategoryViewBlock(Layout $layout): void
+    private function manageCategoryViewLayoutElements(): void
+    {
+        $this->addTweakwiseJsCategoryViewBlock();
+        $this->removeMagentoCategoryViewLayoutElements();
+    }
+
+    /**
+     * @return void
+     */
+    private function addTweakwiseJsCategoryViewBlock(): void
     {
         $blockName = 'tweakwise-js-lister';
-        $layout->createBlock(
+        $this->layout->createBlock(
             View::class,
             $blockName,
             [
@@ -94,7 +107,29 @@ class ManageLayoutBlocks implements ObserverInterface
                 ]
             ]
         )->setTemplate('Tweakwise_TweakwiseJs::category/listing.phtml');
-        $layout->setChild('page.wrapper', $blockName, $blockName);
+        $this->layout->setChild('page.wrapper', $blockName, $blockName);
+    }
+
+    /**
+     * @return void
+     */
+    private function removeMagentoCategoryViewLayoutElements(): void
+    {
+        $this->addEmptyBlock();
+        $this->layout->unsetElement('main');
+        $this->layout->unsetElement('div.sidebar.main');
+        $this->layout->unsetElement('div.sidebar.additional');
+    }
+
+    /**
+     * Function to add an empty block to the "columns" container, because Magento doesn't render empty containers
+     * @return void
+     */
+    private function addEmptyBlock(): void
+    {
+        $blockName = 'empty-block';
+        $this->layout->createBlock(Text::class, $blockName, ['data' => ['text' => ' ']]);
+        $this->layout->setChild('columns', $blockName, $blockName);
     }
 
     /**
@@ -120,13 +155,12 @@ class ManageLayoutBlocks implements ObserverInterface
     }
 
     /**
-     * @param Layout $layout
      * @return void
      */
-    private function addSearchBlock(Layout $layout): void
+    private function addSearchBlock(): void
     {
         $blockName = 'tweakwise-js-search';
-        $layout->createBlock(
+        $this->layout->createBlock(
             Template::class,
             $blockName,
             [
@@ -135,6 +169,6 @@ class ManageLayoutBlocks implements ObserverInterface
                 ]
             ]
         )->setTemplate('Tweakwise_TweakwiseJs::search.phtml');
-        $layout->setChild('after.body.start', $blockName, $blockName);
+        $this->layout->setChild('after.body.start', $blockName, $blockName);
     }
 }
