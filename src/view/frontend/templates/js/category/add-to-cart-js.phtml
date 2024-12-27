@@ -1,0 +1,85 @@
+<?php
+declare(strict_types = 1);
+
+use Magento\Framework\View\Element\Template;
+use Tweakwise\TweakwiseJs\ViewModel\Merchandising;
+
+/** @var Template $block */
+
+/** @var Merchandising $viewModel */
+$viewModel = $block->getViewModel();
+?>
+<script>
+    window['twn-starter-config'].on['twn.add-to-cart'] = function (event) {
+        const tweakwiseProductId = event.data.itemno;
+        const storeId = '<?= $viewModel->getStoreId() ?>';
+        const productId = tweakwiseProductId.replace('1' + storeId.padStart(4,0), '');
+        this.ajaxCart().addToCart(productId);
+    };
+
+    function ajaxCart() {
+        return {
+            loading: false,
+            addToCart(productId) {
+                if (this.loading === false) {
+                    this.loading = true;
+                    this.doPostRequest(productId);
+                }
+            },
+            doPostRequest(productId) {
+                const uenc = btoa(window.location.href);
+                const postUrl = `${BASE_URL}checkout/cart/add/uenc/` + uenc + '/product/' + productId + '/';
+                let bodyData = {
+                    form_key: '<?= $viewModel->getFormKey() ?>',
+                    product: productId,
+                    item: productId,
+                    qty: 1,
+                    uenc: uenc
+                };
+
+                fetch(postUrl, {
+                    headers: {
+                        contentType: 'application/json;charset=utf-8',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: new URLSearchParams(bodyData),
+                    method: 'POST',
+                    mode: 'cors',
+                    credentials: 'include',
+                })
+                    .then(response => {
+                        this.loading = false;
+                        if (response.redirected) {
+                            window.location.href = response.url;
+                            return
+                        }
+
+                        if (response.ok) {
+                            return response.json();
+                        }
+
+                        // this.dispatchMessage("warning", "Post request failed", 8000); TODO: SET MESSAGE
+                    })
+                    .then(response => {
+                        if (!response) {
+                            // if ($btnElement) this.addBtnErrorClass($btnElement);
+                            return;
+                        }
+
+                        const reloadCustomerDataEvent = new CustomEvent(
+                            'reload-customer-section-data'
+                        );
+
+                        window.dispatchEvent(reloadCustomerDataEvent);
+                        // if (callBack) {
+                        //     callBack(response);
+                        // }
+
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+            }
+        }
+    }
+</script>

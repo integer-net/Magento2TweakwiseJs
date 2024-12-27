@@ -71,7 +71,7 @@ class ManageLayoutBlocks implements ObserverInterface
     {
         $blockName = 'tweakwise-js-default';
         $this->layout->createBlock(Template::class, $blockName)
-            ->setTemplate('Tweakwise_TweakwiseJs::default.phtml');
+            ->setTemplate('Tweakwise_TweakwiseJs::js/default.phtml');
         $this->layout->setChild('after.body.start', $blockName, $blockName);
     }
 
@@ -89,6 +89,7 @@ class ManageLayoutBlocks implements ObserverInterface
     private function manageCategoryViewLayoutElements(): void
     {
         $this->addTweakwiseJsCategoryViewBlock();
+        $this->addTweakwiseJsAddToCartBlock();
         $this->removeMagentoCategoryViewLayoutElements();
     }
 
@@ -106,7 +107,25 @@ class ManageLayoutBlocks implements ObserverInterface
                     'view_model' => $this->merchandisingViewModel
                 ]
             ]
-        )->setTemplate('Tweakwise_TweakwiseJs::category/listing.phtml');
+        )->setTemplate('Tweakwise_TweakwiseJs::js/category/listing.phtml');
+        $this->layout->setChild('page.wrapper', $blockName, $blockName);
+    }
+
+    /**
+     * @return void
+     */
+    private function addTweakwiseJsAddToCartBlock(): void
+    {
+        $blockName = 'tweakwise-js-add-to-cart-js';
+        $this->layout->createBlock(
+            View::class,
+            $blockName,
+            [
+                'data' => [
+                    'view_model' => $this->merchandisingViewModel
+                ]
+            ]
+        )->setTemplate('Tweakwise_TweakwiseJs::js/category/add-to-cart-js.phtml');
         $this->layout->setChild('page.wrapper', $blockName, $blockName);
     }
 
@@ -168,7 +187,7 @@ class ManageLayoutBlocks implements ObserverInterface
                     'view_model' => $this->searchViewModel
                 ]
             ]
-        )->setTemplate('Tweakwise_TweakwiseJs::search.phtml');
+        )->setTemplate('Tweakwise_TweakwiseJs::js/search.phtml');
         $this->layout->setChild('after.body.start', $blockName, $blockName);
     }
 }
