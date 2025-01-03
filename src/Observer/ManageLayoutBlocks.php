@@ -12,7 +12,6 @@ use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\View\Element\Template;
-use Magento\Framework\View\Element\Text;
 use Magento\Framework\View\Layout;
 use Tweakwise\TweakwiseJs\Model\Config;
 use Tweakwise\TweakwiseJs\ViewModel\Merchandising;
@@ -54,6 +53,10 @@ class ManageLayoutBlocks implements ObserverInterface
 
         $this->layout = $observer->getLayout();
 
+        if (!$this->needToAddBlocks()) {
+            return;
+        }
+
         $this->addDefaultBlock();
         $this->addSearchBlock();
 
@@ -62,6 +65,15 @@ class ManageLayoutBlocks implements ObserverInterface
         }
 
         $this->manageCategoryViewLayoutElements();
+    }
+
+    /**
+     * If container "after.body.start" doesn't exist, it is not a page request
+     * @return bool
+     */
+    private function needToAddBlocks(): bool
+    {
+        return $this->layout->hasElement('after.body.start');
     }
 
     /**
@@ -125,7 +137,7 @@ class ManageLayoutBlocks implements ObserverInterface
                     'view_model' => $this->merchandisingViewModel
                 ]
             ]
-        )->setTemplate('Tweakwise_TweakwiseJs::js/category/add-to-cart-js.phtml');
+        )->setTemplate('Tweakwise_TweakwiseJs::js/category/add-to-cart.phtml');
         $this->layout->setChild('page.wrapper', $blockName, $blockName);
     }
 
@@ -134,21 +146,27 @@ class ManageLayoutBlocks implements ObserverInterface
      */
     private function removeMagentoCategoryViewLayoutElements(): void
     {
-        $this->addEmptyBlock();
+        $this->moveCustomerBlocks();
         $this->layout->unsetElement('main');
         $this->layout->unsetElement('div.sidebar.main');
         $this->layout->unsetElement('div.sidebar.additional');
     }
 
     /**
-     * Function to add an empty block to the "columns" container, because Magento doesn't render empty containers
+     * Move customer blocks out of the "main", so we can delete the "main" element
      * @return void
      */
-    private function addEmptyBlock(): void
+    private function moveCustomerBlocks(): void
     {
-        $blockName = 'empty-block';
-        $this->layout->createBlock(Text::class, $blockName, ['data' => ['text' => ' ']]);
-        $this->layout->setChild('columns', $blockName, $blockName);
+        $customerDataBlockName = 'customer.customer.data';
+        $customerDataBlock = $this->layout->getBlock($customerDataBlockName);
+        $this->layout->unsetElement($customerDataBlockName);
+        $this->layout->addBlock($customerDataBlock, $customerDataBlockName, 'columns');
+
+        $sectionConfigBlockName = 'customer.section.config';
+        $sectionConfigBlock = $this->layout->getBlock($sectionConfigBlockName);
+        $this->layout->unsetElement($sectionConfigBlockName);
+        $this->layout->addBlock($sectionConfigBlock, $sectionConfigBlockName, 'columns');
     }
 
     /**
