@@ -101,7 +101,7 @@ class ManageLayoutBlocks implements ObserverInterface
     private function manageCategoryViewLayoutElements(): void
     {
         $this->addTweakwiseJsCategoryViewBlock();
-        $this->addTweakwiseJsAddToCartBlock();
+        $this->addTweakwiseJsAddToBlocks();
         $this->removeMagentoCategoryViewLayoutElements();
     }
 
@@ -126,19 +126,32 @@ class ManageLayoutBlocks implements ObserverInterface
     /**
      * @return void
      */
-    private function addTweakwiseJsAddToCartBlock(): void
+    private function addTweakwiseJsAddToBlocks(): void
     {
-        $blockName = 'tweakwise-js-add-to-cart-js';
-        $this->layout->createBlock(
-            View::class,
-            $blockName,
+        $addToBlocks = [
             [
-                'data' => [
-                    'view_model' => $this->merchandisingViewModel
+                'name' => 'tweakwise-js-add-to-cart-js',
+                'template' => 'Tweakwise_TweakwiseJs::js/category/add-to-cart.phtml'
+            ],
+            [
+                'name' => 'tweakwise-js-add-to-wishlist-js',
+                'template' => 'Tweakwise_TweakwiseJs::js/category/add-to-wishlist.phtml'
+            ],
+        ];
+
+        foreach ($addToBlocks as $block) {
+            $blockName = $block['name'];
+            $this->layout->createBlock(
+                View::class,
+                $blockName,
+                [
+                    'data' => [
+                        'view_model' => $this->merchandisingViewModel
+                    ]
                 ]
-            ]
-        )->setTemplate('Tweakwise_TweakwiseJs::js/category/add-to-cart.phtml');
-        $this->layout->setChild('page.wrapper', $blockName, $blockName);
+            )->setTemplate($block['template']);
+            $this->layout->setChild('page.wrapper', $blockName, $blockName);
+        }
     }
 
     /**
