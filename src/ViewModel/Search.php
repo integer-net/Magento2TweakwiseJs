@@ -62,6 +62,6 @@ class Search implements ArgumentInterface
      */
     public function getSearchUrl(): string
     {
-        return trim($this->urlBuilder->getUrl('twsearch#twn|'), '/');
+        return trim($this->urlBuilder->getUrl('catalogsearch/results#twn|'), '/');
     }
 }
