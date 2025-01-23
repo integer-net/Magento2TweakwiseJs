@@ -52,3 +52,9 @@ $viewModel = $block->getViewModel();
         window['twn-starter-config'].input = null;
     </script>
 <?php endif; ?>
+
+<?php if ($viewModel->isSearchResultsPage()): ?>
+    <script>
+        window['twn-starter-config'].ui.closeSearchButton = false;
+    </script>
+<?php endif; ?>
