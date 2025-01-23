@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tweakwise\TweakwiseJs\ViewModel;
 
+use Magento\Framework\App\Request\Http;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
@@ -18,12 +19,14 @@ class Search implements ArgumentInterface
      * @param StoreManagerInterface $storeManager
      * @param Data $dataHelper
      * @param UrlInterface $urlBuilder
+     * @param Http $request
      */
     public function __construct(
         private readonly Config $config,
         private readonly StoreManagerInterface $storeManager,
         private readonly Data $dataHelper,
-        private readonly UrlInterface $urlBuilder
+        private readonly UrlInterface $urlBuilder,
+        private readonly Http $request
     ) {
     }
 
@@ -63,5 +66,13 @@ class Search implements ArgumentInterface
     public function getSearchUrl(): string
     {
         return trim($this->urlBuilder->getUrl('catalogsearch/results#twn|'), '/');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSearchResultsPage(): bool
+    {
+        return $this->request->getFullActionName() === 'catalogsearch_results_index';
     }
 }
