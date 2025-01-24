@@ -31,16 +31,13 @@ define([
          * Function to add product to the wishlist
          */
         function addToWishlist () {
-            addTo(getAddToWishlistUrl());
+            createWishlistForm().submit();
         }
 
         /**
          * @param {string} url
          */
         function addTo (url) {
-            const addToButtonSelector = getAddToButtonSelector();
-            $(addToButtonSelector).prop('disabled', true);
-
             $.ajax({
                 url: url,
                 data: getFormData(),
@@ -58,7 +55,6 @@ define([
                 },
 
                 complete: function (res) {
-                    $(addToButtonSelector).prop('disabled', false);
                     if (res.state() === 'rejected') {
                         location.reload();
                     }
@@ -75,13 +71,6 @@ define([
         }
 
         /**
-         * @returns {string}
-         */
-        function getAddToButtonSelector() {
-            return '#twn-' + options.tweakwiseProductId + ' button';
-        }
-
-        /**
          * @returns {FormData}
          */
         function getFormData() {
@@ -91,6 +80,34 @@ define([
             formData.append('uenc', btoa(window.location.href));
 
             return formData;
+        }
+
+        /**
+         * @returns {jQuery}
+         */
+        function createWishlistForm() {
+            var $form = $('<form>', {
+                action: getAddToWishlistUrl(),
+                method: 'POST'
+            });
+
+            var data = {
+                product: options.productId,
+                form_key: configData.formKey,
+                uenc: btoa(window.location.href)
+            };
+
+            $.each(data, function(key, value) {
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: key,
+                    value: value
+                }).appendTo($form);
+            });
+
+            $form.appendTo('body');
+
+            return $form;
         }
 
         /**
