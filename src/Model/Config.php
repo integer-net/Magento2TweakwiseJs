@@ -12,7 +12,7 @@ class Config
     private const XML_PATH_ENABLED = 'tweakwisejs/general/enabled';
     private const XML_PATH_INSTANCE_KEY = 'tweakwisejs/general/instance_key';
 
-    private const XML_PATH_MERCHANDISING_ENABLED = 'tweakwisejs/merchandising/enabled';
+    public const XML_PATH_MERCHANDISING_ENABLED = 'tweakwisejs/merchandising/enabled';
 
     private const XML_PATH_SEARCH_TYPE = 'tweakwisejs/search/type';
 
@@ -41,11 +41,15 @@ class Config
     }
 
     /**
+     * @param string $scopeType
+     * @param null|int|string $scopeCode
      * @return bool
      */
-    public function isMerchandisingEnabled(): bool
-    {
-        return $this->scopeConfig->isSetFlag(self::XML_PATH_MERCHANDISING_ENABLED, ScopeInterface::SCOPE_STORE);
+    public function isMerchandisingEnabled(
+        string $scopeType = ScopeInterface::SCOPE_STORE,
+        mixed $scopeCode = null
+    ): bool {
+        return $this->scopeConfig->isSetFlag(self::XML_PATH_MERCHANDISING_ENABLED, $scopeType, $scopeCode);
     }
 
     /**
