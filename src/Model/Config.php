@@ -9,12 +9,12 @@ use Magento\Store\Model\ScopeInterface;
 
 class Config
 {
-    private const XML_PATH_ENABLED = 'tweakwisejs/general/enabled';
-    private const XML_PATH_INSTANCE_KEY = 'tweakwisejs/general/instance_key';
+    private const XML_PATH_ENABLED = 'tweakwise/tweakwisejs/general/enabled';
+    private const XML_PATH_INSTANCE_KEY = 'tweakwise/tweakwisejs/general/instance_key';
 
-    public const XML_PATH_MERCHANDISING_ENABLED = 'tweakwisejs/merchandising/enabled';
+    public const XML_PATH_MERCHANDISING_ENABLED = 'tweakwise/tweakwisejs/merchandising/enabled';
 
-    private const XML_PATH_SEARCH_TYPE = 'tweakwisejs/search/type';
+    private const XML_PATH_SEARCH_TYPE = 'tweakwise/tweakwisejs/search/type';
 
     /**
      * @param ScopeConfigInterface $scopeConfig

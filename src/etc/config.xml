@@ -2,16 +2,18 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
     <default>
-        <tweakwisejs>
-            <general>
-                <enabled>0</enabled>
-            </general>
-            <merchandising>
-                <enabled>0</enabled>
-            </merchandising>
-            <search>
-                <type>magento_default</type>
-            </search>
-        </tweakwisejs>
+        <tweakwise>
+            <tweakwisejs>
+                <general>
+                    <enabled>0</enabled>
+                </general>
+                <merchandising>
+                    <enabled>0</enabled>
+                </merchandising>
+                <search>
+                    <type>magento_default</type>
+                </search>
+            </tweakwisejs>
+        </tweakwise>
     </default>
 </config>

@@ -32,7 +32,7 @@ class Config
     {
         $data = $subject->getData();
         if (
-            !$this->isTweakwiseJsConfigurationSaved($subject) ||
+            !$this->isTweakwiseConfigurationSaved($subject) ||
             !$this->isMerchandisingChangedToEnabled($data, $subject) ||
             $this->apiClient->isNavigationFeatureEnabled()
         ) {
@@ -48,9 +48,9 @@ class Config
      * @param Subject $subject
      * @return bool
      */
-    private function isTweakwiseJsConfigurationSaved(Subject $subject): bool
+    private function isTweakwiseConfigurationSaved(Subject $subject): bool
     {
-        return $subject->getSection() === 'tweakwisejs';
+        return $subject->getSection() === 'tweakwise';
     }
 
     /**
@@ -60,7 +60,7 @@ class Config
      */
     private function isMerchandisingChangedToEnabled(array $data, Subject $subject): bool
     {
-        $newValue = (bool) $data['groups']['merchandising']['fields']['enabled']['value'];
+        $newValue = (bool) $data['groups']['tweakwisejs']['groups']['merchandising']['fields']['enabled']['value'];
 
         if (!$newValue) {
             return false;
