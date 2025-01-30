@@ -45,11 +45,6 @@ class ManageLayoutBlocks implements ObserverInterface
 
         $this->layout = $observer->getLayout();
 
-        // TODO: FIX THIS
-        if (!$this->needToAddBlocks()) {
-            return;
-        }
-
         $this->addDefaultHandle();
         $this->addSearchHandle();
 
@@ -58,15 +53,6 @@ class ManageLayoutBlocks implements ObserverInterface
         }
 
         $this->addMerchandisingHandle();
-    }
-
-    /**
-     * If container "after.body.start" doesn't exist, it is not a page request
-     * @return bool
-     */
-    private function needToAddBlocks(): bool
-    {
-        return $this->layout->hasElement('after.body.start');
     }
 
     /**
