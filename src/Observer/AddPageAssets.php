@@ -7,6 +7,7 @@ namespace Tweakwise\TweakwiseJs\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\View\Page\Config as PageConfig;
+use Tweakwise\TweakwiseJs\Helper\Data;
 use Tweakwise\TweakwiseJs\Model\Config;
 
 class AddPageAssets implements ObserverInterface
@@ -26,7 +27,7 @@ class AddPageAssets implements ObserverInterface
      * @return void
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function execute(Observer $observer)
+    public function execute(Observer $observer): void
     {
         if (!$this->config->isEnabled()) {
             return;
@@ -42,13 +43,13 @@ class AddPageAssets implements ObserverInterface
     {
         $instanceKey = $this->config->getInstanceKey();
 
-        $this->addLinkRemotePageAsset('https://gateway.tweakwisenavigator.net/js/starter.js');
+        $this->addLinkRemotePageAsset(sprintf('%s/js/starter.js', Data::GATEWAY_TWEAKWISE_NAVIGATOR_NET_URL));
         $this->addLinkRemotePageAsset(
-            sprintf('https://gateway.tweakwisenavigator.net/js/%s/tweakwise.js', $instanceKey)
+            sprintf('%s/js/%s/tweakwise.js', Data::GATEWAY_TWEAKWISE_NAVIGATOR_NET_URL, $instanceKey)
         );
         $this->addJsRemotePageAsset(
-            sprintf('https://gateway.tweakwisenavigator.net/js/%s/tweakwise.js', $instanceKey),
-            sprintf('https://gateway.tweakwisenavigator.com/js/%s/tweakwise.js', $instanceKey)
+            sprintf('%s/js/%s/tweakwise.js', Data::GATEWAY_TWEAKWISE_NAVIGATOR_NET_URL, $instanceKey),
+            sprintf('%s/js/%s/tweakwise.js', Data::GATEWAY_TWEAKWISE_NAVIGATOR_COM_URL, $instanceKey)
         );
     }
 

@@ -27,7 +27,10 @@ class Data
      */
     public function afterGetSuggestUrl(Subject $subject, string $result): string
     {
-        if (!$this->config->isEnabled() || $this->config->getSearchType() === SearchType::MAGENTO_DEFAULT->value) {
+        if (
+            !$this->config->isEnabled() ||
+            $this->config->getSearchType()->value === SearchType::MAGENTO_DEFAULT->value
+        ) {
             return $result;
         }
 

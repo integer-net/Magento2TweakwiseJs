@@ -4,8 +4,6 @@
     <event name="layout_generate_blocks_after">
         <observer name="Tweakwise_TweakwiseJs_Observer_AddJsToPages"
                   instance="Tweakwise\TweakwiseJs\Observer\AddPageAssets"/>
-    </event>
-    <event name="layout_generate_blocks_after">
         <observer name="Tweakwise_TweakwiseJs_Observer_ManageLayoutBlocks"
                   instance="Tweakwise\TweakwiseJs\Observer\ManageLayoutBlocks"/>
     </event>

@@ -6,6 +6,7 @@ namespace Tweakwise\TweakwiseJs\Model;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
+use Tweakwise\TweakwiseJs\Model\Enum\SearchType;
 
 class Config
 {
@@ -53,10 +54,18 @@ class Config
     }
 
     /**
-     * @return string
+     * @return SearchType
      */
-    public function getSearchType(): string
+    public function getSearchType(): SearchType
     {
-        return $this->scopeConfig->getValue(self::XML_PATH_SEARCH_TYPE, ScopeInterface::SCOPE_STORE);
+        $searchType = SearchType::tryFrom(
+            $this->scopeConfig->getValue(self::XML_PATH_SEARCH_TYPE, ScopeInterface::SCOPE_STORE)
+        );
+
+        if (!$searchType) {
+            return SearchType::from(SearchType::MAGENTO_DEFAULT->value);
+        }
+
+        return $searchType;
     }
 }

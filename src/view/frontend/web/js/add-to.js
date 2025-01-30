@@ -22,7 +22,7 @@ define([
         /**
          * Function to add product to the cart
          */
-        function addToCart () {
+        function addToCart() {
             $(options.minicartSelector).trigger('contentLoading');
             addTo(getAddToCartUrl());
         }
@@ -30,14 +30,14 @@ define([
         /**
          * Function to add product to the wishlist
          */
-        function addToWishlist () {
+        function addToWishlist() {
             createWishlistForm().submit();
         }
 
         /**
          * @param {string} url
          */
-        function addTo (url) {
+        function addTo(url) {
             $.ajax({
                 url: url,
                 data: getFormData(),
@@ -67,7 +67,7 @@ define([
          * @returns {string}
          */
         function getProductId(tweakwiseProductId) {
-            return tweakwiseProductId.replace('1' + configData.storeId.padStart(4,0), '');
+            return tweakwiseProductId.replace('1' + configData.storeId.padStart(4, 0), '');
         }
 
         /**
@@ -86,18 +86,18 @@ define([
          * @returns {jQuery}
          */
         function createWishlistForm() {
-            var $form = $('<form>', {
+            const $form = $('<form>', {
                 action: getAddToWishlistUrl(),
                 method: 'POST'
             });
 
-            var data = {
+            const data = {
                 product: options.productId,
                 form_key: configData.formKey,
                 uenc: btoa(window.location.href)
             };
 
-            $.each(data, function(key, value) {
+            $.each(data, function (key, value) {
                 $('<input>').attr({
                     type: 'hidden',
                     name: key,
@@ -114,7 +114,7 @@ define([
          * @returns {string}
          */
         function getAddToCartUrl() {
-            return `${BASE_URL}checkout/cart/add/uenc/` + btoa(window.location.href) + '/product/' + options.productId + '/';
+            return `${BASE_URL}checkout/cart/add/uenc/${btoa(window.location.href)}/product/${options.productId}/`;
         }
 
         /**

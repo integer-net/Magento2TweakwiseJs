@@ -9,6 +9,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use Magento\Framework\Serialize\Serializer\Json;
 use Psr\Log\LoggerInterface;
 use Tweakwise\TweakwiseJs\Api\Exception\ApiException;
+use Tweakwise\TweakwiseJs\Helper\Data;
 use Tweakwise\TweakwiseJs\Model\Config;
 
 class Client
@@ -30,7 +31,11 @@ class Client
      */
     public function isNavigationFeatureEnabled(): bool
     {
-        $url = sprintf('https://gateway.tweakwisenavigator.com/instance/%s', $this->config->getInstanceKey());
+        $url = sprintf(
+            '%s/instance/%s',
+            Data::GATEWAY_TWEAKWISE_NAVIGATOR_COM_URL,
+            $this->config->getInstanceKey()
+        );
 
         try {
             $response = $this->doRequest($url);

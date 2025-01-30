@@ -8,7 +8,7 @@ use Magento\Framework\View\Element\Template;
 
 <script>
     window.tweakwiseFailover = function (src) {
-        var script = document.createElement('script');
+        const script = document.createElement('script');
         script.async = true;
         script.src = src;
         document.head.appendChild(script);

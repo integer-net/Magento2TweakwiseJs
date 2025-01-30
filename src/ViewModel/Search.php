@@ -11,6 +11,7 @@ use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Tweakwise\TweakwiseJs\Helper\Data;
 use Tweakwise\TweakwiseJs\Model\Config;
+use Tweakwise\TweakwiseJs\Model\Enum\SearchType;
 
 class Search implements ArgumentInterface
 {
@@ -31,9 +32,9 @@ class Search implements ArgumentInterface
     }
 
     /**
-     * @return string
+     * @return SearchType
      */
-    public function getSearchType(): string
+    public function getSearchType(): SearchType
     {
         return $this->config->getSearchType();
     }
