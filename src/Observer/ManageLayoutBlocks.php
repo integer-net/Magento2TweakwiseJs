@@ -48,7 +48,7 @@ class ManageLayoutBlocks implements ObserverInterface
         $this->addDefaultHandle();
         $this->addSearchHandle();
 
-        if (!$this->isCategoryPage() || !$this->showTweakwiseJsCategoryViewBlock()) {
+        if (!$this->isCategoryPage() || !$this->shouldShowTweakwiseJsCategoryViewBlock()) {
             return;
         }
 
@@ -90,7 +90,7 @@ class ManageLayoutBlocks implements ObserverInterface
     /**
      * @return bool
      */
-    private function showTweakwiseJsCategoryViewBlock(): bool
+    private function shouldShowTweakwiseJsCategoryViewBlock(): bool
     {
         if (!$this->config->isMerchandisingEnabled()) {
             return false;

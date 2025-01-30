@@ -15,7 +15,7 @@ class SearchType implements OptionSourceInterface
     public function toOptionArray(): array
     {
         return array_map(function (SearchTypeEnum $searchTypeEnum) {
-            return ['value' => $searchTypeEnum->value, 'label' => $searchTypeEnum->label()];
+            return ['value' => $searchTypeEnum->value, 'label' => __($searchTypeEnum->label())];
         }, SearchTypeEnum::cases());
     }
 }

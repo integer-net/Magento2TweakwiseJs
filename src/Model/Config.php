@@ -58,14 +58,8 @@ class Config
      */
     public function getSearchType(): SearchType
     {
-        $searchType = SearchType::tryFrom(
+        return SearchType::tryFrom(
             $this->scopeConfig->getValue(self::XML_PATH_SEARCH_TYPE, ScopeInterface::SCOPE_STORE)
-        );
-
-        if (!$searchType) {
-            return SearchType::from(SearchType::MAGENTO_DEFAULT->value);
-        }
-
-        return $searchType;
+        ) ?? SearchType::MAGENTO_DEFAULT;
     }
 }
