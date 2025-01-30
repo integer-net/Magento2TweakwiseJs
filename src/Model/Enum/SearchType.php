@@ -16,9 +16,9 @@ enum SearchType: string
     public function label(): string
     {
         return match ($this) {
-            self::MAGENTO_DEFAULT => 'Magento Default',
-            self::INSTANT_SEARCH => 'Instant Search',
-            self::SUGGESTIONS => 'Suggestions'
+            self::MAGENTO_DEFAULT => __('Magento Default')->render(),
+            self::INSTANT_SEARCH => __('Instant Search')->render(),
+            self::SUGGESTIONS => __('Suggestions')->render()
         };
     }
 }
