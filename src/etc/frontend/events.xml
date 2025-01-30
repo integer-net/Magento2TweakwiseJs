@@ -1,10 +1,12 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="layout_load_before">
+        <observer name="Tweakwise_TweakwiseJs_Observer_ManageLayoutBlocks"
+                  instance="Tweakwise\TweakwiseJs\Observer\ManageLayoutBlocks"/>
+    </event>
     <event name="layout_generate_blocks_after">
         <observer name="Tweakwise_TweakwiseJs_Observer_AddJsToPages"
                   instance="Tweakwise\TweakwiseJs\Observer\AddPageAssets"/>
-        <observer name="Tweakwise_TweakwiseJs_Observer_ManageLayoutBlocks"
-                  instance="Tweakwise\TweakwiseJs\Observer\ManageLayoutBlocks"/>
     </event>
 </config>

@@ -4,18 +4,14 @@ declare(strict_types=1);
 
 namespace Tweakwise\TweakwiseJs\Observer;
 
-use Magento\Catalog\Block\Category\View;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\Layer\Resolver;
 use Magento\Framework\App\Request\Http;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Layout;
 use Tweakwise\TweakwiseJs\Model\Config;
-use Tweakwise\TweakwiseJs\ViewModel\Merchandising;
-use Tweakwise\TweakwiseJs\ViewModel\Search;
 
 class ManageLayoutBlocks implements ObserverInterface
 {
@@ -27,15 +23,11 @@ class ManageLayoutBlocks implements ObserverInterface
     /**
      * @param Http $request
      * @param Config $config
-     * @param Merchandising $merchandisingViewModel
-     * @param Search $searchViewModel
      * @param Resolver $layerResolver
      */
     public function __construct(
         private readonly Http $request,
         private readonly Config $config,
-        private readonly Merchandising $merchandisingViewModel,
-        private readonly Search $searchViewModel,
         private readonly Resolver $layerResolver
     ) {
     }
@@ -45,7 +37,7 @@ class ManageLayoutBlocks implements ObserverInterface
      * @return void
      * @throws LocalizedException
      */
-    public function execute(Observer $observer)
+    public function execute(Observer $observer): void
     {
         if (!$this->config->isEnabled()) {
             return;
@@ -53,18 +45,19 @@ class ManageLayoutBlocks implements ObserverInterface
 
         $this->layout = $observer->getLayout();
 
+        // TODO: FIX THIS
         if (!$this->needToAddBlocks()) {
             return;
         }
 
-        $this->addDefaultBlock();
-        $this->addSearchBlock();
+        $this->addDefaultHandle();
+        $this->addSearchHandle();
 
         if (!$this->isCategoryPage() || !$this->showTweakwiseJsCategoryViewBlock()) {
             return;
         }
 
-        $this->manageCategoryViewLayoutElements();
+        $this->addMerchandisingHandle();
     }
 
     /**
@@ -79,12 +72,25 @@ class ManageLayoutBlocks implements ObserverInterface
     /**
      * @return void
      */
-    private function addDefaultBlock(): void
+    private function addDefaultHandle(): void
     {
-        $blockName = 'tweakwise-js-default';
-        $this->layout->createBlock(Template::class, $blockName)
-            ->setTemplate('Tweakwise_TweakwiseJs::js/default.phtml');
-        $this->layout->setChild('after.body.start', $blockName, $blockName);
+        $this->layout->getUpdate()->addHandle('tweakwisejs_default');
+    }
+
+    /**
+     * @return void
+     */
+    private function addSearchHandle(): void
+    {
+        $this->layout->getUpdate()->addHandle('tweakwisejs_search');
+    }
+
+    /**
+     * @return void
+     */
+    private function addMerchandisingHandle(): void
+    {
+        $this->layout->getUpdate()->addHandle('tweakwisejs_merchandising');
     }
 
     /**
@@ -93,80 +99,6 @@ class ManageLayoutBlocks implements ObserverInterface
     private function isCategoryPage(): bool
     {
         return $this->request->getFullActionName() === 'catalog_category_view';
-    }
-
-    /**
-     * @return void
-     */
-    private function manageCategoryViewLayoutElements(): void
-    {
-        $this->addTweakwiseJsCategoryViewBlock();
-        $this->addTweakwiseJsAddToBlock();
-        $this->removeMagentoCategoryViewLayoutElements();
-    }
-
-    /**
-     * @return void
-     */
-    private function addTweakwiseJsCategoryViewBlock(): void
-    {
-        $blockName = 'tweakwise-js-lister';
-        $this->layout->createBlock(
-            View::class,
-            $blockName,
-            [
-                'data' => [
-                    'view_model' => $this->merchandisingViewModel
-                ]
-            ]
-        )->setTemplate('Tweakwise_TweakwiseJs::js/category/listing.phtml');
-        $this->layout->setChild('page.wrapper', $blockName, $blockName);
-    }
-
-    /**
-     * @return void
-     */
-    private function addTweakwiseJsAddToBlock(): void
-    {
-        $blockName = 'tweakwise-js-add-to-js';
-        $this->layout->createBlock(
-            View::class,
-            $blockName,
-            [
-                'data' => [
-                    'view_model' => $this->merchandisingViewModel
-                ]
-            ]
-        )->setTemplate('Tweakwise_TweakwiseJs::js/category/add-to.phtml');
-        $this->layout->setChild('page.wrapper', $blockName, $blockName);
-    }
-
-    /**
-     * @return void
-     */
-    private function removeMagentoCategoryViewLayoutElements(): void
-    {
-        $this->moveCustomerBlocks();
-        $this->layout->unsetElement('main');
-        $this->layout->unsetElement('div.sidebar.main');
-        $this->layout->unsetElement('div.sidebar.additional');
-    }
-
-    /**
-     * Move customer blocks out of the "main", so we can delete the "main" element
-     * @return void
-     */
-    private function moveCustomerBlocks(): void
-    {
-        $customerDataBlockName = 'customer.customer.data';
-        $customerDataBlock = $this->layout->getBlock($customerDataBlockName);
-        $this->layout->unsetElement($customerDataBlockName);
-        $this->layout->addBlock($customerDataBlock, $customerDataBlockName, 'columns');
-
-        $sectionConfigBlockName = 'customer.section.config';
-        $sectionConfigBlock = $this->layout->getBlock($sectionConfigBlockName);
-        $this->layout->unsetElement($sectionConfigBlockName);
-        $this->layout->addBlock($sectionConfigBlock, $sectionConfigBlockName, 'columns');
     }
 
     /**
@@ -189,23 +121,5 @@ class ManageLayoutBlocks implements ObserverInterface
         }
 
         return true;
-    }
-
-    /**
-     * @return void
-     */
-    private function addSearchBlock(): void
-    {
-        $blockName = 'tweakwise-js-search';
-        $this->layout->createBlock(
-            Template::class,
-            $blockName,
-            [
-                'data' => [
-                    'view_model' => $this->searchViewModel
-                ]
-            ]
-        )->setTemplate('Tweakwise_TweakwiseJs::js/search.phtml');
-        $this->layout->setChild('after.body.start', $blockName, $blockName);
     }
 }
