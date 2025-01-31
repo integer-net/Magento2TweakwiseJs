@@ -41,7 +41,8 @@ $viewModel = $block->getViewModel();
 <?php elseif ($viewModel->getSearchType()->value === SearchType::INSTANT_SEARCH->value): ?>
     <script>
         window.addEventListener('DOMContentLoaded', () => {
-            const $form = document.getElementById('search_mini_form'); // TODO: HYVA COMPATIBLE
+            const $form = document.getElementById('search_mini_form');
+            $form.removeAttribute('@submit.prevent');
 
             if (!$form) {
                 return;

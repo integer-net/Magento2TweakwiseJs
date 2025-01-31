@@ -89,7 +89,7 @@ class ManageLayoutBlocks implements ObserverInterface
      */
     private function addMerchandisingHandle(): void
     {
-        $this->layout->getUpdate()->addHandle($this->getHandleName('tweakwisejs_merchandising'));
+        $this->layout->getUpdate()->addHandle('tweakwisejs_merchandising');
     }
 
     /**
