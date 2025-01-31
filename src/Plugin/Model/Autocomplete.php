@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Tweakwise\TweakwiseJs\Plugin\Helper;
+namespace Tweakwise\TweakwiseJs\Plugin\Model;
 
-use Magento\Search\Helper\Data as Subject;
+use Magento\Search\Model\Autocomplete as Subject;
 use Tweakwise\TweakwiseJs\Model\Config;
 use Tweakwise\TweakwiseJs\Model\Enum\SearchType;
 
-class Data
+class Autocomplete
 {
     /**
      * @param Config $config
@@ -19,13 +19,13 @@ class Data
     }
 
     /**
-     * If search type is not the default Magento search -> disable the Magento suggestions by setting empty URL
+     * If search type is not the default Magento search -> disable the Magento suggestions
      * @param Subject $subject
-     * @param string $result
-     * @return string
+     * @param array $result
+     * @return array
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function afterGetSuggestUrl(Subject $subject, string $result): string
+    public function afterGetItems(Subject $subject, array $result): array
     {
         if (
             !$this->config->isEnabled() ||
@@ -34,6 +34,6 @@ class Data
             return $result;
         }
 
-        return '';
+        return [];
     }
 }
