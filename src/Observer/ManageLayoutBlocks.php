@@ -10,6 +10,7 @@ use Magento\Framework\App\Request\Http;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\View\DesignInterface;
 use Magento\Framework\View\Layout;
 use Tweakwise\TweakwiseJs\Model\Config;
 
@@ -21,14 +22,21 @@ class ManageLayoutBlocks implements ObserverInterface
     private Layout $layout;
 
     /**
+     * @var bool|null
+     */
+    private ?bool $isHyva = null;
+
+    /**
      * @param Http $request
      * @param Config $config
      * @param Resolver $layerResolver
+     * @param DesignInterface $viewDesign
      */
     public function __construct(
         private readonly Http $request,
         private readonly Config $config,
-        private readonly Resolver $layerResolver
+        private readonly Resolver $layerResolver,
+        private readonly DesignInterface $viewDesign
     ) {
     }
 
@@ -76,7 +84,7 @@ class ManageLayoutBlocks implements ObserverInterface
      */
     private function addMerchandisingHandle(): void
     {
-        $this->layout->getUpdate()->addHandle('tweakwisejs_merchandising');
+        $this->layout->getUpdate()->addHandle($this->getHandleName('tweakwisejs_merchandising'));
     }
 
     /**
@@ -107,5 +115,36 @@ class ManageLayoutBlocks implements ObserverInterface
         }
 
         return true;
+    }
+
+    /**
+     * @return bool
+     */
+    private function isHyva(): bool
+    {
+        if ($this->isHyva !== null) {
+            return $this->isHyva;
+        }
+
+        $theme = $this->viewDesign->getDesignTheme();
+        while ($theme) {
+            if (str_starts_with($theme->getCode(), 'Hyva/')) {
+                $this->isHyva = true;
+                return $this->isHyva;
+            }
+            $theme = $theme->getParentTheme();
+        }
+
+        $this->isHyva = false;
+        return $this->isHyva;
+    }
+
+    /**
+     * @param string $handle
+     * @return string
+     */
+    private function getHandleName(string $handle): string
+    {
+        return $this->isHyva() ? sprintf('hyva_%s', $handle) : $handle;
     }
 }
