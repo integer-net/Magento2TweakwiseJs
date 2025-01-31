@@ -13,6 +13,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\View\DesignInterface;
 use Magento\Framework\View\Layout;
 use Tweakwise\TweakwiseJs\Model\Config;
+use Tweakwise\TweakwiseJs\Model\Enum\SearchType;
 
 class ManageLayoutBlocks implements ObserverInterface
 {
@@ -56,6 +57,10 @@ class ManageLayoutBlocks implements ObserverInterface
         $this->addDefaultHandle();
         $this->addSearchHandle();
 
+        if ($this->shouldAddAddToCartWishlistHandle()) {
+            $this->addAddToCartWishlistHandle();
+        }
+
         if (!$this->isCategoryPage() || !$this->shouldShowTweakwiseJsCategoryViewBlock()) {
             return;
         }
@@ -88,11 +93,27 @@ class ManageLayoutBlocks implements ObserverInterface
     }
 
     /**
+     * @return void
+     */
+    private function addAddToCartWishlistHandle(): void
+    {
+        $this->layout->getUpdate()->addHandle($this->getHandleName('tweakwisejs_add_to'));
+    }
+
+    /**
      * @return bool
      */
     private function isCategoryPage(): bool
     {
         return $this->request->getFullActionName() === 'catalog_category_view';
+    }
+
+    /**
+     * @return bool
+     */
+    private function isSearchResultsPage(): bool
+    {
+        return $this->request->getFullActionName() === 'catalogsearch_results_index';
     }
 
     /**
@@ -115,6 +136,16 @@ class ManageLayoutBlocks implements ObserverInterface
         }
 
         return true;
+    }
+
+    /**
+     * @return bool
+     */
+    private function shouldAddAddToCartWishlistHandle(): bool
+    {
+        return $this->isCategoryPage() ||
+            $this->isSearchResultsPage() ||
+            $this->config->getSearchType()->value === SearchType::INSTANT_SEARCH->value;
     }
 
     /**
