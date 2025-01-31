@@ -6,6 +6,8 @@ namespace Tweakwise\TweakwiseJs\Model\Api;
 
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\GuzzleException;
+use Magento\Framework\App\CacheInterface;
+use Magento\Framework\App\Config as AppConfig;
 use Magento\Framework\Serialize\Serializer\Json;
 use Psr\Log\LoggerInterface;
 use Tweakwise\TweakwiseJs\Api\Exception\ApiException;
@@ -14,15 +16,19 @@ use Tweakwise\TweakwiseJs\Model\Config;
 
 class Client
 {
+    private const FEATURES_CACHE_KEY = 'tweakwisejs_features';
+
     /**
      * @param Config $config
      * @param Json $jsonSerializer
      * @param LoggerInterface $logger
+     * @param CacheInterface $cache
      */
     public function __construct(
         private readonly Config $config,
         private readonly Json $jsonSerializer,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
+        private readonly CacheInterface $cache
     ) {
     }
 
@@ -31,6 +37,27 @@ class Client
      */
     public function isNavigationFeatureEnabled(): bool
     {
+        return $this->getFeatures()['navigation'] ?? true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSuggestionsFeatureEnabled(): bool
+    {
+        return $this->getFeatures()['suggestions'] ?? true;
+    }
+
+    /**
+     * @return array
+     */
+    private function getFeatures(): array
+    {
+        $cachedFeatures = $this->cache->load(self::FEATURES_CACHE_KEY);
+        if ($cachedFeatures) {
+            return $this->jsonSerializer->unserialize($cachedFeatures);
+        }
+
         $url = sprintf(
             '%s/instance/%s',
             Data::GATEWAY_TWEAKWISE_NAVIGATOR_COM_URL,
@@ -41,25 +68,29 @@ class Client
             $response = $this->doRequest($url);
         } catch (ApiException $e) {
             $this->logger->critical(
-                'Tweakwise API error: Unable to retrieve navigation feature enabled',
+                'Tweakwise API error: Unable to retrieve Tweakwise features',
                 [
                     'url' => $url,
                     'exception' => $e->getMessage()
                 ]
             );
-            return true;
+            return [];
         }
 
-        $features = $response['features'] ?? [];
-        foreach ($features as $feature) {
-            if ($feature['name'] !== 'navigation') {
-                continue;
-            }
-
-            return $feature['value'];
+        $features = [];
+        foreach ($response['features'] ?? [] as $feature) {
+            $features[$feature['name']] = $feature['value'];
         }
 
-        return true;
+        if ($features) {
+            $this->cache->save(
+                $this->jsonSerializer->serialize($features),
+                self::FEATURES_CACHE_KEY,
+                [AppConfig::CACHE_TAG]
+            );
+        }
+
+        return $features;
     }
 
     /**
