@@ -11,14 +11,13 @@
                 </arguments>
             </block>
 
-<!--            TODO: ADD HYVA ADD TO JS BLOCK-->
-<!--            <block class="Magento\Catalog\Block\Category\View" name="tweakwise-js-add-to-js"-->
-<!--                   template="Tweakwise_TweakwiseJs::js/category/add-to.phtml">-->
-<!--                <arguments>-->
-<!--                    <argument name="view_model" xsi:type="object">Tweakwise\TweakwiseJs\ViewModel\Merchandising-->
-<!--                    </argument>-->
-<!--                </arguments>-->
-<!--            </block>-->
+            <block class="Magento\Framework\View\Element\Template" name="tweakwise-js-add-to-js"
+                   template="Tweakwise_TweakwiseJs::js/category/hyva/add-to.phtml">
+                <arguments>
+                    <argument name="view_model" xsi:type="object">Tweakwise\TweakwiseJs\ViewModel\Merchandising
+                    </argument>
+                </arguments>
+            </block>
         </referenceContainer>
 
         <!-- Make sure the columns container is not empty, else Magento doesn't render it -->

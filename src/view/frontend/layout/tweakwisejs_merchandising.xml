@@ -11,7 +11,7 @@
                 </arguments>
             </block>
 
-            <block class="Magento\Catalog\Block\Category\View" name="tweakwise-js-add-to-js"
+            <block class="Magento\Framework\View\Element\Template" name="tweakwise-js-add-to-js"
                    template="Tweakwise_TweakwiseJs::js/category/add-to.phtml">
                 <arguments>
                     <argument name="view_model" xsi:type="object">Tweakwise\TweakwiseJs\ViewModel\Merchandising

@@ -1,0 +1,167 @@
+<?php
+declare(strict_types = 1);
+
+use Magento\Framework\View\Element\Template;
+use Tweakwise\TweakwiseJs\ViewModel\Merchandising;
+
+/** @var Template $block */
+
+/** @var Merchandising $viewModel */
+$viewModel = $block->getViewModel();
+$storeId = $viewModel->getStoreId();
+$formKey = $viewModel->getFormKey();
+?>
+<script>
+    const options = {
+        storeId: '<?= $storeId ?>',
+        formKey: '<?= $formKey ?>',
+        tweakwiseProductId: '',
+        productId: '',
+        loading: false
+    };
+
+    window['twn-starter-config'].on['twn.add-to-cart'] = function (event) {
+        setProductData(event.data.itemno);
+        addToCart();
+    };
+
+    window['twn-starter-config'].on['twn.add-to-favorites'] = function (event) {
+        setProductData(event.data.itemno);
+        addToWishlist();
+    };
+
+    /**
+     * Function to add product to the cart
+     */
+    function addToCart() {
+        if (options.loading === false) {
+            options.loading = true;
+            addTo(getAddToCartUrl());
+        }
+    }
+
+    /**
+     * Function to add product to the wishlist
+     */
+    function addToWishlist() {
+        createWishlistForm().submit();
+    }
+
+    /**
+     * @param {string} url
+     */
+    function addTo(url) {
+        let bodyData = {
+            form_key: hyva.getFormKey(),
+            product: options.productId,
+            uenc: btoa(window.location.href)
+        };
+
+        fetch(url, {
+            headers: {
+                contentType: 'application/json;charset=utf-8',
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+            body: new URLSearchParams(bodyData),
+            method: 'POST',
+            mode: 'cors',
+            credentials: 'include',
+        })
+            .then(response => {
+                options.loading = false;
+                if (response.redirected) {
+                    window.location.href = response.url;
+                    return
+                }
+
+                if (response.ok) {
+                    return response.json();
+                }
+
+                dispatchMessage('warning', 'Post request failed', 8000);
+            })
+            .then(response => {
+                const reloadCustomerDataEvent = new CustomEvent(
+                    'reload-customer-section-data'
+                );
+
+                window.dispatchEvent(reloadCustomerDataEvent);
+            })
+            .catch(error => {
+                this.dispatchMessage('error', error, 8000);
+            });
+    }
+
+    /**
+     * @param {string} tweakwiseProductId
+     * @returns {string}
+     */
+    function getProductId(tweakwiseProductId) {
+        return tweakwiseProductId.replace('1' + options.storeId.padStart(4, 0), '');
+    }
+
+    /**
+     * @returns {HTMLFormElement}
+     */
+    function createWishlistForm() {
+        const $form = document.createElement('form');
+        $form.action = getAddToWishlistUrl();
+        $form.method = 'POST';
+
+        const data = {
+            product: options.productId,
+            form_key: options.formKey,
+            uenc: btoa(window.location.href)
+        };
+
+        for (const key in data) {
+            if (data.hasOwnProperty(key)) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = data[key];
+                $form.appendChild(input);
+            }
+        }
+
+        document.body.appendChild($form);
+
+        return $form;
+    }
+
+    /**
+     * @returns {string}
+     */
+    function getAddToCartUrl() {
+        return `${BASE_URL}checkout/cart/add/uenc/${btoa(window.location.href)}/product/${options.productId}/`;
+    }
+
+    /**
+     * @returns {string}
+     */
+    function getAddToWishlistUrl() {
+        return `${BASE_URL}wishlist/index/add/`;
+    }
+
+    /**
+     * @param {string} tweakwiseProductId
+     */
+    function setProductData(tweakwiseProductId) {
+        options.tweakwiseProductId = tweakwiseProductId;
+        options.productId = getProductId(tweakwiseProductId);
+    }
+
+    /**
+     * @param {string} type
+     * @param {string} message
+     * @param {number} timeout
+     */
+    function dispatchMessage(type, message, timeout) {
+        if (!window.dispatchMessages) return;
+        window.dispatchMessages([{
+                type: type,
+                text: message,
+            }],
+            timeout);
+    }
+</script>
