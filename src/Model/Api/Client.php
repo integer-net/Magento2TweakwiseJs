@@ -38,7 +38,7 @@ class Client
      */
     public function isNavigationFeatureEnabled(): bool
     {
-        return $this->getFeatures()[Feature::NAVIGATION->value] ?? true;
+        return $this->getFeatures()[Feature::NAVIGATION->value] ?? false;
     }
 
     /**
@@ -46,7 +46,7 @@ class Client
      */
     public function isSuggestionsFeatureEnabled(): bool
     {
-        return $this->getFeatures()[Feature::SUGGESTIONS->value] ?? true;
+        return $this->getFeatures()[Feature::SUGGESTIONS->value] ?? false;
     }
 
     /**
