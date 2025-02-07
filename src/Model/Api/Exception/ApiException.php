@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tweakwise\TweakwiseJs\Api\Exception;
+namespace Tweakwise\TweakwiseJs\Model\Api\Exception;
 
 use Exception;
 

@@ -10,9 +10,10 @@ use Magento\Framework\App\CacheInterface;
 use Magento\Framework\App\Config as AppConfig;
 use Magento\Framework\Serialize\Serializer\Json;
 use Psr\Log\LoggerInterface;
-use Tweakwise\TweakwiseJs\Api\Exception\ApiException;
+use Tweakwise\TweakwiseJs\Model\Api\Exception\ApiException;
 use Tweakwise\TweakwiseJs\Helper\Data;
 use Tweakwise\TweakwiseJs\Model\Config;
+use Tweakwise\TweakwiseJs\Model\Enum\Feature;
 
 class Client
 {
@@ -37,7 +38,7 @@ class Client
      */
     public function isNavigationFeatureEnabled(): bool
     {
-        return $this->getFeatures()['navigation'] ?? true;
+        return $this->getFeatures()[Feature::NAVIGATION->value] ?? true;
     }
 
     /**
@@ -45,7 +46,7 @@ class Client
      */
     public function isSuggestionsFeatureEnabled(): bool
     {
-        return $this->getFeatures()['suggestions'] ?? true;
+        return $this->getFeatures()[Feature::SUGGESTIONS->value] ?? true;
     }
 
     /**
@@ -58,10 +59,15 @@ class Client
             return $this->jsonSerializer->unserialize($cachedFeatures);
         }
 
+        $instanceKey = $this->config->getInstanceKey();
+        if (!$instanceKey) {
+            return $this->getFallbackValues();
+        }
+
         $url = sprintf(
             '%s/instance/%s',
             Data::GATEWAY_TWEAKWISE_NAVIGATOR_COM_URL,
-            $this->config->getInstanceKey()
+            $instanceKey
         );
 
         try {
@@ -74,7 +80,7 @@ class Client
                     'exception' => $e->getMessage()
                 ]
             );
-            return [];
+            return $this->getFallbackValues();
         }
 
         $features = [];
@@ -117,5 +123,16 @@ class Client
 
         $contents = $response->getBody()->getContents();
         return $this->jsonSerializer->unserialize($contents);
+    }
+
+    /**
+     * @return array
+     */
+    private function getFallbackValues(): array
+    {
+        return [
+            Feature::NAVIGATION->value => false,
+            Feature::SUGGESTIONS->value => false
+        ];
     }
 }
