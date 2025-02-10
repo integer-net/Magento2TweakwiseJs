@@ -4,17 +4,22 @@ define([
     return function (configData) {
         const options = {
             minicartSelector: '[data-block="minicart"]',
-            messagesSelector: '[data-placeholder="messages"]',
             tweakwiseProductId: '',
             productId: ''
         };
 
         window['twn-starter-config'].on['twn.add-to-cart'] = function (event) {
+            if (shouldMoveMessages()) {
+                moveMessages();
+            }
             setProductData(event.data.itemno);
             addToCart();
         };
 
         window['twn-starter-config'].on['twn.add-to-favorites'] = function (event) {
+            if (shouldMoveMessages()) {
+                moveMessages();
+            }
             setProductData(event.data.itemno);
             addToWishlist();
         };
@@ -60,6 +65,26 @@ define([
                     }
                 }
             });
+        }
+
+        /**
+         * If maincontent DIV is not displayed, the messages should be moved out of this DIV
+         * @returns {Boolean}
+         */
+        function shouldMoveMessages() {
+            return !$('#maincontent').is(':visible');
+        }
+
+        /**
+         * @returns {void}
+         */
+        function moveMessages() {
+            const $messages = $('#maincontent .page.messages');
+            if (!$messages) {
+                return;
+            }
+
+            $messages.insertBefore('#twn-starter-overlay');
         }
 
         /**
