@@ -1,0 +1,66 @@
+<?php
+declare(strict_types = 1);
+
+use Magento\Framework\View\Element\Template;
+use Tweakwise\TweakwiseJs\Model\Enum\SearchType;
+use Tweakwise\TweakwiseJs\ViewModel\Search;
+
+/** @var Template $block */
+
+/** @var Search $viewModel */
+$viewModel = $block->getViewModel();
+?>
+
+<?php if ($viewModel->getSearchType()->value === SearchType::SUGGESTIONS->value): ?>
+    <script>
+        const input = window['twn-starter-config'].input;
+        window['twn-starter-config'].input = null;
+        window.addEventListener('twn.suggestions.ready', () => {
+            window.tweakwiseSuggestions({
+                input: input,
+                instancekey: "<?= $viewModel->getInstanceKey();?>",
+                cid: "<?= $viewModel->getStoreRootCategory();?>",
+                searchPhrases: {
+                    handle: ({ data }) => {
+                        location.href = '<?= $viewModel->getSearchUrl();?>?tn_q=' + data.match;
+                    }
+                }
+            });
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const inputId = input[0].replace('#', '');
+            const $input = document.getElementById(inputId);
+            const $form = $input.closest('form');
+            $form.onsubmit = e => {
+                e.preventDefault();
+                location.href = '<?= $viewModel->getSearchUrl();?>?tn_q=' + $input.value;
+            };
+        });
+    </script>
+<?php elseif ($viewModel->getSearchType()->value === SearchType::INSTANT_SEARCH->value): ?>
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const $form = document.getElementById('search_mini_form');
+            $form.removeAttribute('@submit.prevent');
+
+            if (!$form) {
+                return;
+            }
+
+            $form.onsubmit = e => {
+                e.preventDefault();
+            };
+        });
+    </script>
+<?php else: ?>
+    <script>
+        window['twn-starter-config'].input = null;
+    </script>
+<?php endif; ?>
+
+<?php if ($viewModel->isSearchResultsPage()): ?>
+    <script>
+        window['twn-starter-config'].ui.closeSearchButton = false;
+    </script>
+<?php endif; ?>

@@ -1,0 +1,22 @@
+<?php
+declare(strict_types = 1);
+
+use Magento\Framework\View\Element\Template;
+use Tweakwise\TweakwiseJs\ViewModel\Merchandising;
+
+/** @var Template $block */
+
+/** @var Merchandising $viewModel */
+$viewModel = $block->getViewModel();
+?>
+<script type='text/x-magento-init'>
+    {
+        "*": {
+            "Tweakwise_TweakwiseJs/js/add-to": {
+                "storeId": "<?= $viewModel->getStoreId(); ?>",
+                "formKey": "<?= $viewModel->getFormKey() ?>"
+            }
+        }
+    }
+</script>
+
