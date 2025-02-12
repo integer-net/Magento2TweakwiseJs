@@ -1,0 +1,16 @@
+<?php
+declare(strict_types = 1);
+
+use Magento\Catalog\Block\Category\View;
+use Tweakwise\TweakwiseJs\ViewModel\Merchandising;
+
+/** @var View $block */
+
+/** @var Merchandising $viewModel */
+$viewModel = $block->getViewModel();
+?>
+
+<script>
+    window['twn-starter-config'].navigation.cid = <?= $viewModel->getTweakwiseCategoryId($block);?>;
+</script>
+
